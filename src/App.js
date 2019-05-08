@@ -15,14 +15,18 @@ class App extends React.Component {
     this.handleChange = this.handleChange.bind(this);
   }
   addTask(e) {
-    this.setState(state => ({
-      toDo: [state.toDo, state.value] }));
-    alert(this.state.toDo.length);
+    this.setState({
+      toDo: this.state.toDo.concat(this.state.value)
+    });
     e.preventDefault();
   }
 
-  deleteTask() {
-
+  deleteTask(index) {
+    let newArray = this.state.toDo.slice();
+    newArray.splice(index, 1);
+    this.setState({
+      toDo: newArray
+    });
   }
   handleChange(e) {
     this.setState({
@@ -36,6 +40,7 @@ class App extends React.Component {
     return (
       <div>
         <AddTask addTask={this.addTask} handleChange={this.handleChange} value={this.state.value} />
+        <h1> your todo list</h1>
         <ToDo deleteTask={this.deleteTask} data={this.state.toDo} />
       </div>
     );
@@ -46,20 +51,21 @@ class ToDo extends React.Component {
 
   constructor(props) {
     super(props);
-    this.newMethod = this.newMethod.bind(this);
-  }
-
-  newMethod() {
-    if (!this.props.data.length)
-      return false;
-    let listItem = this.props.data.map((element,index) => <li key={index}>  {element.text}
-      <button> remove from list</button>
-    </li>);
-    return (<ul>{listItem}</ul>);
   }
 
   render() {
-    return this.newMethod();
+    return (
+      <ul>
+        {this.props.data.map((item, index) => (
+          <li key={index}>  {item.date.toDateString()}  
+            <br/>
+            {item.text}
+            <br/>
+            <button onClick={() => this.props.deleteTask(index)}> completed </button>
+          </li>
+        ))}
+      </ul>
+    );
   }
 }
 
@@ -73,7 +79,7 @@ class AddTask extends React.Component {
     return (
       <form onSubmit={this.props.addTask}>
         <label>
-          add text:
+          add your task:
           <textarea value={this.props.value.text} onChange={this.props.handleChange} />
         </label>
         <input type="submit" value="Submit" />
