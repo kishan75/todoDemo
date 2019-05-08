@@ -2,46 +2,82 @@ import React from 'react';
 import logo from './logo.svg';
 import './App.css';
 
-// function App() {
-//   return (
-//     <div className="App">
-//       <header className="App-header">
-//         <img src={logo} className="App-logo" alt="logo" />
-//         <p>
-//           Edit <code>src/App.js</code> and save to reload.
-//         </p>
-//         <a
-//           className="App-link"
-//           href="https://reactjs.org"
-//           target="_blank"
-//           rel="noopener noreferrer"
-//         >
-//           Learn React
-//         </a>
-//       </header>
-//     </div>
-//   );
-// }
-
 class App extends React.Component {
-
   constructor(props) {
     super(props);
     this.state = {
-      val: 5
+      toDo: [],
+      value: {
+      }
     };
-    this.handleClick = this.handleClick.bind(this);
+    this.addTask = this.addTask.bind(this);
+    this.deleteTask = this.deleteTask.bind(this);
+    this.handleChange = this.handleChange.bind(this);
+  }
+  addTask(e) {
+    this.setState(state => ({
+      toDo: [state.toDo, state.value] }));
+    alert(this.state.toDo.length);
+    e.preventDefault();
   }
 
-  handleClick() {
+  deleteTask() {
+
+  }
+  handleChange(e) {
     this.setState({
-      val: this.state.val+1
+      value: {
+        text: e.target.value,
+        date: new Date(),
+      }
     });
+  }
+  render() {
+    return (
+      <div>
+        <AddTask addTask={this.addTask} handleChange={this.handleChange} value={this.state.value} />
+        <ToDo deleteTask={this.deleteTask} data={this.state.toDo} />
+      </div>
+    );
+  }
+}
+
+class ToDo extends React.Component {
+
+  constructor(props) {
+    super(props);
+    this.newMethod = this.newMethod.bind(this);
+  }
+
+  newMethod() {
+    if (!this.props.data.length)
+      return false;
+    let listItem = this.props.data.map((element,index) => <li key={index}>  {element.text}
+      <button> remove from list</button>
+    </li>);
+    return (<ul>{listItem}</ul>);
+  }
+
+  render() {
+    return this.newMethod();
+  }
+}
+
+class AddTask extends React.Component {
+  constructor(props) {
+    super(props);
+
   }
 
   render() {
     return (
-      <button onClick={this.handleClick}>increment value : {this.state.val}</button>
+      <form onSubmit={this.props.addTask}>
+        <label>
+          add text:
+          <textarea value={this.props.value.text} onChange={this.props.handleChange} />
+        </label>
+        <input type="submit" value="Submit" />
+      </form>
     );
   }
 }
